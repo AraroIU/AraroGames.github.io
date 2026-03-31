@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARARO GAME</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e6f8ff 0%, #ffe4f1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.55);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff6a96;
+            margin-bottom: 10px;
+            font-size: 2.8em;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            text-shadow: 1px 1px 4px rgba(255, 106, 150, 0.35);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 30px;
+            font-size: 1.05em;
+            font-weight: 600;
+        }
+
+        .subtitle.tagline {
+            color: #ff9ab8;
+            font-size: 1.35em;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: 0.8px;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* เมนูหลัก */
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-button {
+            padding: 20px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .menu-button:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-memory {
+            background: linear-gradient(135deg, #b3e5ff, #ffd7ed);
+            color: #4f4f4f;
+        }
+
+        .btn-rearrange {
+            background: linear-gradient(135deg, #ffdee8, #d7f8ff);
+            color: #4f4f4f;
+        }
+
+        .btn-missing {
+            background: linear-gradient(135deg, #d8f2ff, #ffe0f0);
+            color: #4f4f4f;
+        }
+
+        .best-score {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #666;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .best-score .score {
+            color: #f59e0b;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+
+        /* หน้าเกมส์ */
+        .game-screen {
+            display: none;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            color: #333;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .instructions {
+            text-align: center;
+            color: #666;
+            margin: 20px 0;
+            font-size: 1em;
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        /* เกมส์จำตัวหนังสือ */
+        .letters-display {
+            background: linear-gradient(135deg, #d8f0ff, #bdeaff);
+            color: #1f4d7a;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 3em;
+            font-weight: bold;
+            margin: 30px 0;
+            text-align: center;
+            letter-spacing: 15px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-box {
+            display: flex;
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .input-box input {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-box button {
+            padding: 15px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .input-box button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        /* เกมส์เรียงตัวหนังสือ */
+        .rearrange-game {
+            text-align: center;
+        }
+
+        .word-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+
+        .letters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+            gap: 10px;
+            margin: 30px 0;
+            min-height: 80px;
+        }
+
+        .letter-btn {
+            padding: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .letter-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .letter-btn.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .answer-box {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 60px;
+            margin: 20px 0;
+            font-size: 1.8em;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hint {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 1.1em;
+            color: #856404;
+        }
+
+        /* เกมส์หาตัวหนังสือที่หายไป */
+        .missing-game {
+            text-align: center;
+        }
+
+        .missing-letters {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 30px 0;
+            letter-spacing: 10px;
+        }
+
+        .blanks {
+            display: inline-block;
+            font-size: 2.5em;
+            color: #667eea;
+            font-weight: bold;
+            letter-spacing: 8px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .choice-btn {
+            padding: 15px;
+            font-size: 1.3em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .choice-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .choice-btn.correct {
+            background: #27ae60;
+        }
+
+        .choice-btn.wrong {
+            background: #e74c3c;
+        }
+
+        /* ปุ่มควบคุม */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #ffd2ec, #c8f1ff);
+            color: #4f4f4f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: #f8f4fb;
+            color: #4f4f4f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        .btn-hint {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: #ffbddb;
+            color: #4f4f4f;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-hint:hover:not(:disabled) {
+            background: #e67e22;
+        }
+
+        .btn-hint:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-stats {
+            font-size: 1.1em;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .modal-stats strong {
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .response-message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .response-message.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #28a745;
+        }
+
+        .response-message.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 2px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .letters-display {
+                font-size: 2em;
+                letter-spacing: 10px;
+            }
+
+            .game-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .button-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- เมนูหลัก -->
+        <div id="mainMenu" class="menu-screen">
+            <h1>🎮 ARARO GAMES</h1>
+            <p class="subtitle tagline">จดจำตัวหนังสือไทย</p>
+            <p class="subtitle">เลือกเกมส์ที่คุณต้องการ</p>
+            
+            <button class="menu-button btn-memory" onclick="game.startMemoryGame()">
+                🧠 จำตัวหนังสือ
+                <br><small style="font-size: 0.8em; opacity: 0.9;">จำตัวหนังสือที่ปรากฏ แล้วพิมพ์คำตอบ</small>
+            </button>
+            
+            <button class="menu-button btn-rearrange" onclick="game.startRearrangeGame()">
+                🔤 เรียงตัวหนังสือเป็นคำ
+                <br><small style="font-size: 0.8em; opacity: 0.9;">เรียงตัวหนังสือให้เป็นคำศัพท์ที่ถูกต้อง</small>
+            </button>
+            
+            <button class="menu-button btn-missing" onclick="game.startMissingGame()">
+                ❓ หาตัวหนังสือที่หายไป
+                <br><small style="font-size: 0.8em; opacity: 0.9;">เลือกตัวหนังสือที่หายไปจากคำ</small>
+            </button>
+
+            <div class="best-score">
+                ✨ คะแนนสูงสุด: <span class="score" id="bestScoreDisplay">0</span>
+            </div>
+        </div>
+
+        <!-- เกมส์จำตัวหนังสือ -->
+        <div id="memoryScreen" class="game-screen">
+            <div class="game-header">
+                <div class="game-title">🧠 จำตัวหนังสือ</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">ข้อที่</div>
+                        <div class="stat-value" id="memoryRound">0/10</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">คะแนน</div>
+                        <div class="stat-value" id="memoryScore">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">✏️ จำตัวหนังสือที่ปรากฏ แล้วพิมพ์คำตอบถูกต้อง</div>
+
+            <div class="letters-display" id="lettersDisplay">เตรียมพร้อม</div>
+
+            <div class="hint" id="hintBox" style="display: none;">
+                💡 <strong id="hintText"></strong>
+            </div>
+
+            <div class="input-box">
+                <input type="text" id="memoryInput" placeholder="พิมพ์ตัวหนังสือ..." autocomplete="off">
+                <button onclick="game.checkMemoryAnswer()">ตรวจสอบ</button>
+            </div>
+
+            <div class="response-message" id="memoryMessage" style="display: none;"></div>
+
+            <div class="controls">
+                <button class="btn-hint" onclick="game.showHint()" id="hintBtn">💡 ได้ใจความ</button>
+                <button class="btn-secondary" onclick="game.repeatMemory()">🔁 ทำซ้ำ</button>
+                <button class="btn-secondary" onclick="game.skipMemory()">⏭️ ข้าม</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+
+        <!-- เกมส์เรียงตัวหนังสือ -->
+        <div id="rearrangeScreen" class="game-screen rearrange-game">
+            <div class="game-header">
+                <div class="game-title">🔤 เรียงตัวหนังสือเป็นคำ</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">ข้อที่</div>
+                        <div class="stat-value" id="rearrangeRound">0/10</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">คะแนน</div>
+                        <div class="stat-value" id="rearrangeScore">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">👆 คลิกตัวหนังสือตามลำดับเพื่อเรียงเป็นคำที่ถูกต้อง</div>
+
+            <div class="word-display" id="wordDisplay">ตัวหนังสือ</div>
+
+            <div class="hint" id="rearrangeHint" style="display: none;">
+                💡 ความหมาย: <strong id="rearrangeHintText"></strong>
+            </div>
+
+            <div id="lettersGrid" class="letters-grid"></div>
+
+            <div class="answer-box" id="answerBox">-</div>
+
+            <div class="response-message" id="rearrangeMessage" style="display: none;"></div>
+
+            <div class="controls">
+                <button class="btn-primary" onclick="game.resetRearrange()">🔄 ล้าง</button>
+                <button class="btn-hint" onclick="game.showRearrangeHint()" id="rearrangeHintBtn">💡 ได้ใจความ</button>
+                <button class="btn-secondary" onclick="game.skipRearrange()">⏭️ ข้าม</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+
+        <!-- เกมส์หาตัวหนังสือที่หายไป -->
+        <div id="missingScreen" class="game-screen missing-game">
+            <div class="game-header">
+                <div class="game-title">❓ หาตัวหนังสือที่หายไป</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">ข้อที่</div>
+                        <div class="stat-value" id="missingRound">0/10</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">คะแนน</div>
+                        <div class="stat-value" id="missingScore">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">👆 เลือกตัวหนังสือที่หายไป</div>
+
+            <div class="hint" id="missingHint" style="display: none;">
+                💡 ความหมาย: <strong id="missingHintText"></strong>
+            </div>
+
+            <div style="margin: 40px 0;">
+                <div class="missing-letters" id="missingLetters"></div>
+            </div>
+
+            <div class="button-grid" id="missingChoices"></div>
+
+            <div class="response-message" id="missingMessage" style="display: none;"></div>
+
+            <div class="controls">
+                <button class="btn-hint" onclick="game.showMissingHint()" id="missingHintBtn">💡 ได้ใจความ</button>
+                <button class="btn-secondary" onclick="game.skipMissing()">⏭️ ข้าม</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">🎉</div>
+            <div class="modal-stats" id="modalStats"></div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const thaiLetters = [
+            { letter: 'ก', hint: 'ไก่' },
+            { letter: 'ข', hint: 'ไข่' },
+            { letter: 'ค', hint: 'ควาย' },
+            { letter: 'ง', hint: 'งู' },
+            { letter: 'จ', hint: 'จาน' },
+            { letter: 'ฉ', hint: 'ฉิ่ง' },
+            { letter: 'ช', hint: 'ชาง' },
+            { letter: 'ซ', hint: 'โซ่' },
+            { letter: 'ย', hint: 'ยักษ์' },
+            { letter: 'ด', hint: 'เด็ก' },
+            { letter: 'ต', hint: 'เตา' },
+            { letter: 'ถ', hint: 'ถุง' },
+            { letter: 'ท', hint: 'ทหาร' },
+            { letter: 'ธ', hint: 'ธง' },
+            { letter: 'น', hint: 'หนู' },
+            { letter: 'บ', hint: 'แบะ' },
+            { letter: 'ป', hint: 'ปลา' },
+            { letter: 'ผ', hint: 'ผึ้ง' },
+            { letter: 'พ', hint: 'พาน' },
+            { letter: 'ฟ', hint: 'ฟัน' },
+            { letter: 'ม', hint: 'ม้า' },
+            { letter: 'ย', hint: 'ยม' },
+            { letter: 'ร', hint: 'เรือ' },
+            { letter: 'ล', hint: 'ลิง' },
+            { letter: 'ว', hint: 'แหวน' },
+            { letter: 'ส', hint: 'เสือ' },
+            { letter: 'ห', hint: 'หีบ' },
+            { letter: 'อ', hint: 'อ่าง' },
+        ];
+
+        const thaiWords = [
+            { word: 'สนุก', meaning: 'ความสุข' },
+            { word: 'เรียน', meaning: 'ศึกษา' },
+            { word: 'หนังสือ', meaning: 'เอกสาร' },
+            { word: 'ไทย', meaning: 'ประเทศ' },
+            { word: 'สวย', meaning: 'งาม' },
+            { word: 'ขมัก', meaning: 'เสียบ' },
+            { word: 'บ้าน', meaning: 'อาศัย' },
+            { word: 'ครอบครัว', meaning: 'ระบบเกาะกลุ่ม' },
+            { word: 'ความสุข', meaning: 'ความเกิดสุข' },
+            { word: 'ปลา', meaning: 'สัตว์น้ำ' },
+        ];
+
+        const game = {
+            bestScore: localStorage.getItem('bestScore') ? parseInt(localStorage.getItem('bestScore')) : 0,
+            currentScore: 0,
+            gameMode: null,
+            currentQuestion: 0,
+            totalQuestions: 10,
+            hintsUsed: 0,
+
+            // จำตัวหนังสือ
+            memoryLetters: [],
+            memoryAnswer: '',
+            memoryHint: null,
+
+            // เรียงตัวหนังสือ
+            currentWord: {},
+            currentLetters: [],
+            selectedLetters: [],
+            rearrangeHint: null,
+
+            // หาตัวหนังสือที่หายไป
+            missingWord: {},
+            missingLetter: '',
+            missingChoices: [],
+
+            showScreen(screenId) {
+                document.querySelectorAll('.menu-screen, .game-screen').forEach(el => el.style.display = 'none');
+                document.getElementById(screenId).style.display = screenId === 'mainMenu' ? 'flex' : 'block';
+            },
+
+            backToMenu() {
+                this.currentScore = 0;
+                this.currentQuestion = 0;
+                this.hintsUsed = 0;
+                this.showScreen('mainMenu');
+                this.updateBestScore();
+                document.getElementById('modal').classList.remove('show');
+            },
+
+            updateBestScore() {
+                document.getElementById('bestScoreDisplay').textContent = this.bestScore;
+            },
+
+            clearMessages() {
+                document.querySelectorAll('.response-message').forEach(el => el.style.display = 'none');
+            },
+
+            // ===== เกมส์จำตัวหนังสือ =====
+            startMemoryGame() {
+                this.gameMode = 'memory';
+                this.currentScore = 0;
+                this.currentQuestion = 0;
+                this.hintsUsed = 0;
+                this.showScreen('memoryScreen');
+                this.nextMemoryQuestion();
+            },
+
+            nextMemoryQuestion() {
+                this.clearMessages();
+                document.getElementById('memoryInput').value = '';
+                document.getElementById('hintBox').style.display = 'none';
+                document.getElementById('hintBtn').disabled = false;
+
+                if (this.currentQuestion >= this.totalQuestions) {
+                    this.gameOverMemory();
+                    return;
+                }
+
+                this.currentQuestion++;
+                document.getElementById('memoryRound').textContent = `${this.currentQuestion}/${this.totalQuestions}`;
+                
+                // สุ่มตัวหนังสือ 3-5 ตัว
+                const count = Math.floor(Math.random() * 3) + 3;
+                this.memoryLetters = [];
+                for (let i = 0; i < count; i++) {
+                    const randomLetter = thaiLetters[Math.floor(Math.random() * thaiLetters.length)];
+                    this.memoryLetters.push(randomLetter);
+                }
+                this.memoryAnswer = this.memoryLetters.map(l => l.letter).join('');
+                this.memoryHint = this.memoryLetters.map(l => l.hint).join(', ');
+
+                this.showLettersAnimated();
+            },
+
+            async showLettersAnimated() {
+                const display = document.getElementById('lettersDisplay');
+                display.textContent = '';
+                
+                for (let letterObj of this.memoryLetters) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    display.textContent += letterObj.letter;
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                display.textContent = '?';
+                document.getElementById('memoryInput').focus();
+            },
+
+            checkMemoryAnswer() {
+                const input = document.getElementById('memoryInput').value.trim();
+                const messageBox = document.getElementById('memoryMessage');
+
+                if (!input) {
+                    messageBox.textContent = '⚠️ กรุณากรอกตัวหนังสือ';
+                    messageBox.className = 'response-message wrong';
+                    messageBox.style.display = 'block';
+                    return;
+                }
+
+                if (input === this.memoryAnswer) {
+                    this.currentScore += 10;
+                    messageBox.textContent = '✓ ถูกต้อง!';
+                    messageBox.className = 'response-message correct';
+                    document.getElementById('memoryScore').textContent = this.currentScore;
+                    messageBox.style.display = 'block';
+                    
+                    setTimeout(() => this.nextMemoryQuestion(), 1500);
+                } else {
+                    messageBox.textContent = `✗ ผิด! คำตอบคือ: ${this.memoryAnswer}`;
+                    messageBox.className = 'response-message wrong';
+                    messageBox.style.display = 'block';
+                    
+                    setTimeout(() => this.nextMemoryQuestion(), 2000);
+                }
+            },
+
+            showHint() {
+                document.getElementById('hintText').textContent = this.memoryHint;
+                document.getElementById('hintBox').style.display = 'block';
+                document.getElementById('hintBtn').disabled = true;
+            },
+
+            repeatMemory() {
+                if (this.gameMode !== 'memory') return;
+                this.clearMessages();
+                document.getElementById('memoryInput').value = '';
+                document.getElementById('hintBox').style.display = 'none';
+                this.showLettersAnimated();
+            },
+
+            skipMemory() {
+                this.nextMemoryQuestion();
+            },
+
+            gameOverMemory() {
+                if (this.currentScore > this.bestScore) {
+                    this.bestScore = this.currentScore;
+                    localStorage.setItem('bestScore', this.bestScore);
+                }
+                const stats = `<strong>คะแนน:</strong> ${this.currentScore}<br><strong>สูงสุด:</strong> ${this.bestScore}`;
+                this.showGameOver('🎮 เกมส์จบ!', stats);
+            },
+
+            // ===== เกมส์เรียงตัวหนังสือ =====
+            startRearrangeGame() {
+                this.gameMode = 'rearrange';
+                this.currentScore = 0;
+                this.currentQuestion = 0;
+                this.hintsUsed = 0;
+                this.showScreen('rearrangeScreen');
+                this.nextRearrangeQuestion();
+            },
+
+            nextRearrangeQuestion() {
+                this.clearMessages();
+                document.getElementById('rearrangeHint').style.display = 'none';
+                document.getElementById('rearrangeHintBtn').disabled = false;
+
+                if (this.currentQuestion >= this.totalQuestions) {
+                    this.gameOverRearrange();
+                    return;
+                }
+
+                this.currentQuestion++;
+                document.getElementById('rearrangeRound').textContent = `${this.currentQuestion}/${this.totalQuestions}`;
+                
+                this.currentWord = thaiWords[Math.floor(Math.random() * thaiWords.length)];
+                this.currentLetters = this.currentWord.word.split('').sort(() => Math.random() - 0.5);
+                this.selectedLetters = [];
+
+                document.getElementById('wordDisplay').textContent = '?'.repeat(this.currentWord.word.length);
+                document.getElementById('answerBox').textContent = '-';
+                this.renderRearrangeLetters();
+            },
+
+            renderRearrangeLetters() {
+                const grid = document.getElementById('lettersGrid');
+                grid.innerHTML = '';
+
+                this.currentLetters.forEach((letter, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'letter-btn';
+                    btn.textContent = letter;
+                    btn.onclick = () => this.selectRearrangeLetter(index, letter, btn);
+                    grid.appendChild(btn);
+                });
+            },
+
+            selectRearrangeLetter(index, letter, btn) {
+                this.selectedLetters.push(letter);
+                btn.classList.add('used');
+
+                const answer = this.selectedLetters.join('');
+                document.getElementById('answerBox').textContent = answer;
+
+                if (answer === this.currentWord.word) {
+                    this.currentScore += 10;
+                    const messageBox = document.getElementById('rearrangeMessage');
+                    messageBox.textContent = '✓ ถูกต้อง!';
+                    messageBox.className = 'response-message correct';
+                    messageBox.style.display = 'block';
+                    document.getElementById('rearrangeScore').textContent = this.currentScore;
+
+                    document.querySelectorAll('.letter-btn').forEach(b => b.disabled = true);
+                    setTimeout(() => this.nextRearrangeQuestion(), 1500);
+                }
+            },
+
+            resetRearrange() {
+                this.selectedLetters = [];
+                document.getElementById('answerBox').textContent = '-';
+                this.renderRearrangeLetters();
+            },
+
+            showRearrangeHint() {
+                document.getElementById('rearrangeHintText').textContent = this.currentWord.meaning;
+                document.getElementById('rearrangeHint').style.display = 'block';
+                document.getElementById('rearrangeHintBtn').disabled = true;
+            },
+
+            skipRearrange() {
+                const messageBox = document.getElementById('rearrangeMessage');
+                messageBox.textContent = `✗ ข้าม! คำตอบคือ: ${this.currentWord.word}`;
+                messageBox.className = 'response-message wrong';
+                messageBox.style.display = 'block';
+                
+                setTimeout(() => this.nextRearrangeQuestion(), 1500);
+            },
+
+            gameOverRearrange() {
+                if (this.currentScore > this.bestScore) {
+                    this.bestScore = this.currentScore;
+                    localStorage.setItem('bestScore', this.bestScore);
+                }
+                const stats = `<strong>คะแนน:</strong> ${this.currentScore}<br><strong>สูงสุด:</strong> ${this.bestScore}`;
+                this.showGameOver('🎮 เกมส์จบ!', stats);
+            },
+
+            // ===== เกมส์หาตัวหนังสือที่หายไป =====
+            startMissingGame() {
+                this.gameMode = 'missing';
+                this.currentScore = 0;
+                this.currentQuestion = 0;
+                this.hintsUsed = 0;
+                this.showScreen('missingScreen');
+                this.nextMissingQuestion();
+            },
+
+            nextMissingQuestion() {
+                this.clearMessages();
+                document.getElementById('missingHint').style.display = 'none';
+                document.getElementById('missingHintBtn').disabled = false;
+
+                if (this.currentQuestion >= this.totalQuestions) {
+                    this.gameOverMissing();
+                    return;
+                }
+
+                this.currentQuestion++;
+                document.getElementById('missingRound').textContent = `${this.currentQuestion}/${this.totalQuestions}`;
+                
+                this.missingWord = thaiWords[Math.floor(Math.random() * thaiWords.length)];
+                const wordLetters = this.missingWord.word.split('');
+                const randomIndex = Math.floor(Math.random() * wordLetters.length);
+                this.missingLetter = wordLetters[randomIndex];
+
+                // สร้างคำที่มีการเว้นตำแหน่ง
+                const displayLetters = wordLetters.map((l, i) => i === randomIndex ? '_' : l);
+                document.getElementById('missingLetters').innerHTML = displayLetters.map(l => 
+                    `<span class="blanks">${l}</span>`
+                ).join('');
+
+                // สร้างตัวเลือก
+                const choices = [this.missingLetter];
+                const allLetters = [...new Set(thaiWords.flatMap(w => w.word.split('')))];
+                while (choices.length < 4) {
+                    const randomLetter = allLetters[Math.floor(Math.random() * allLetters.length)];
+                    if (!choices.includes(randomLetter)) {
+                        choices.push(randomLetter);
+                    }
+                }
+                
+                choices.sort(() => Math.random() - 0.5);
+                this.missingChoices = choices;
+                this.renderMissingChoices();
+            },
+
+            renderMissingChoices() {
+                const container = document.getElementById('missingChoices');
+                container.innerHTML = '';
+
+                this.missingChoices.forEach(letter => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-btn';
+                    btn.textContent = letter;
+                    btn.onclick = () => this.checkMissingLetter(letter, btn);
+                    container.appendChild(btn);
+                });
+            },
+
+            checkMissingLetter(letter, btn) {
+                const buttons = document.querySelectorAll('.choice-btn');
+                buttons.forEach(b => b.disabled = true);
+
+                const messageBox = document.getElementById('missingMessage');
+
+                if (letter === this.missingLetter) {
+                    btn.classList.add('correct');
+                    this.currentScore += 10;
+                    messageBox.textContent = '✓ ถูกต้อง!';
+                    messageBox.className = 'response-message correct';
+                    document.getElementById('missingScore').textContent = this.currentScore;
+                } else {
+                    btn.classList.add('wrong');
+                    buttons.forEach(b => {
+                        if (b.textContent === this.missingLetter) {
+                            b.classList.add('correct');
+                        }
+                    });
+                    messageBox.textContent = `✗ ผิด! ตัวหนังสือที่ถูก: ${this.missingLetter}`;
+                    messageBox.className = 'response-message wrong';
+                }
+                messageBox.style.display = 'block';
+
+                setTimeout(() => this.nextMissingQuestion(), 1500);
+            },
+
+            showMissingHint() {
+                document.getElementById('missingHintText').textContent = this.missingWord.meaning;
+                document.getElementById('missingHint').style.display = 'block';
+                document.getElementById('missingHintBtn').disabled = true;
+            },
+
+            skipMissing() {
+                this.nextMissingQuestion();
+            },
+
+            gameOverMissing() {
+                if (this.currentScore > this.bestScore) {
+                    this.bestScore = this.currentScore;
+                    localStorage.setItem('bestScore', this.bestScore);
+                }
+                const stats = `<strong>คะแนน:</strong> ${this.currentScore}<br><strong>สูงสุด:</strong> ${this.bestScore}`;
+                this.showGameOver('🎮 เกมส์จบ!', stats);
+            },
+
+            showGameOver(title, stats) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalStats').innerHTML = stats;
+                document.getElementById('modal').classList.add('show');
+            }
+        };
+
+        window.onload = () => {
+            game.updateBestScore();
+            game.backToMenu();
+        };
+    </script>
+</body>
+</html>
