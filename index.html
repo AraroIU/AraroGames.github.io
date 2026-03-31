@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมส์ฝึกความจำ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        /* เมนูหลัก */
+        .menu-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-button {
+            padding: 20px 30px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .menu-button:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-sequence {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .btn-matching {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+
+        .btn-color {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+        }
+
+        .best-score {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 1.2em;
+            color: #666;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .best-score .score {
+            color: #f59e0b;
+            font-weight: bold;
+            font-size: 1.4em;
+        }
+
+        /* หน้าเกมส์ */
+        .game-screen {
+            display: none;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .game-title {
+            font-size: 1.8em;
+            color: #333;
+        }
+
+        .game-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .stat-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        /* เกมส์ลำดับตัวเลข */
+        .sequence-game {
+            text-align: center;
+        }
+
+        .display-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            font-size: 3em;
+            font-weight: bold;
+            margin: 30px 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .game-btn {
+            padding: 40px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .game-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .game-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .btn-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .btn-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .btn-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        /* เกมส์จับคู่ */
+        .matching-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .card {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* เกมส์สี */
+        .color-game {
+            text-align: center;
+        }
+
+        .color-display {
+            width: 150px;
+            height: 150px;
+            margin: 30px auto;
+            border-radius: 15px;
+            background: #95a5a6;
+            transition: background 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .color-btn {
+            padding: 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .color-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .color-red { background: #e74c3c; }
+        .color-yellow { background: #f39c12; }
+        .color-green { background: #27ae60; }
+        .color-blue { background: #3498db; }
+
+        /* ปุ่มควบคุม */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            padding: 12px 30px;
+            font-size: 1em;
+            background: #ecf0f1;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #bdc3c7;
+        }
+
+        .instructions {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .modal-stats {
+            font-size: 1.1em;
+            color: #666;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+
+        .modal-stats strong {
+            color: #667eea;
+            font-size: 1.3em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .matching-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .game-btn {
+                padding: 30px;
+                font-size: 1.2em;
+            }
+
+            .color-display {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- หน้าเมนูหลัก -->
+        <div id="mainMenu" class="menu-screen">
+            <h1>🧠 เกมส์ฝึกความจำ</h1>
+            <p class="subtitle">เลือกเกมส์ที่คุณต้องการ</p>
+            
+            <button class="menu-button btn-sequence" onclick="game.startSequenceGame()">
+                🔢 จำลำดับตัวเลข
+                <br><small style="font-size: 0.8em; opacity: 0.9;">จำลำดับตัวเลขที่เพิ่มขึ้น</small>
+            </button>
+            
+            <button class="menu-button btn-matching" onclick="game.startMatchingGame()">
+                🎴 จับคู่ตัวเลข
+                <br><small style="font-size: 0.8em; opacity: 0.9;">หาคู่จำนวนที่เหมือนกัน</small>
+            </button>
+            
+            <button class="menu-button btn-color" onclick="game.startColorGame()">
+                🎨 จำสี
+                <br><small style="font-size: 0.8em; opacity: 0.9;">จำสีตามลำดับที่ปรากฏ</small>
+            </button>
+
+            <div class="best-score">
+                ✨ คะแนนสูงสุด: <span class="score" id="bestScoreDisplay">0</span>
+            </div>
+        </div>
+
+        <!-- เกมส์ลำดับตัวเลข -->
+        <div id="sequenceScreen" class="game-screen sequence-game">
+            <div class="game-header">
+                <div class="game-title">🔢 จำลำดับตัวเลข</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">รอบ</div>
+                        <div class="stat-value" id="sequenceRound">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">คะแนน</div>
+                        <div class="stat-value" id="sequenceScore">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">จำลำดับตัวเลขใดก็ได้ แล้วกดปุ่มตามลำดับ</div>
+            
+            <div class="display-box" id="sequenceDisplay">พร้อม</div>
+
+            <div class="button-grid">
+                <button class="game-btn btn-1" id="seq1" onclick="game.playerPressSequence(1)" disabled>1</button>
+                <button class="game-btn btn-2" id="seq2" onclick="game.playerPressSequence(2)" disabled>2</button>
+                <button class="game-btn btn-3" id="seq3" onclick="game.playerPressSequence(3)" disabled>3</button>
+                <button class="game-btn btn-4" id="seq4" onclick="game.playerPressSequence(4)" disabled>4</button>
+            </div>
+
+            <div class="controls">
+                <button class="btn-primary" onclick="game.nextSequenceRound()" id="startSeqBtn">เริ่มเกมส์</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+
+        <!-- เกมส์จับคู่ -->
+        <div id="matchingScreen" class="game-screen">
+            <div class="game-header">
+                <div class="game-title">🎴 จับคู่ตัวเลข</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">จับคู่</div>
+                        <div class="stat-value" id="matchingMatched">0/8</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">พยายาม</div>
+                        <div class="stat-value" id="matchingAttempts">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">พลิกการ์ดเพื่อหาคู่จำนวนเดียวกัน</div>
+
+            <div class="matching-grid" id="matchingGrid"></div>
+
+            <div class="controls">
+                <button class="btn-primary" onclick="game.startMatchingGame()">เล่นใหม่</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+
+        <!-- เกมส์สี -->
+        <div id="colorScreen" class="game-screen color-game">
+            <div class="game-header">
+                <div class="game-title">🎨 จำสี</div>
+                <div class="game-stats">
+                    <div class="stat">
+                        <div class="stat-label">รอบ</div>
+                        <div class="stat-value" id="colorRound">0</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">คะแนน</div>
+                        <div class="stat-value" id="colorScore">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions">จำสีตามลำดับ แล้วเลือกสีตามลำดับนั้น</div>
+
+            <div class="color-display" id="colorDisplay"></div>
+
+            <div class="color-buttons">
+                <button class="color-btn color-red" id="colorRedBtn" onclick="game.playerChooseColor('#e74c3c')" disabled>แดง</button>
+                <button class="color-btn color-yellow" id="colorYellowBtn" onclick="game.playerChooseColor('#f39c12')" disabled>เหลือง</button>
+                <button class="color-btn color-green" id="colorGreenBtn" onclick="game.playerChooseColor('#27ae60')" disabled>เขียว</button>
+                <button class="color-btn color-blue" id="colorBlueBtn" onclick="game.playerChooseColor('#3498db')" disabled>ฟ้า</button>
+            </div>
+
+            <div class="controls">
+                <button class="btn-primary" onclick="game.nextColorRound()" id="startColorBtn">เริ่มเกมส์</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modalTitle">🎉</div>
+            <div class="modal-stats" id="modalStats"></div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="game.backToMenu()">กลับหน้าแรก</button>
+                <button class="btn-secondary" onclick="game.backToMenu()">ปิด</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const game = {
+            // สถานะทั่วไป
+            bestScore: localStorage.getItem('bestScore') ? parseInt(localStorage.getItem('bestScore')) : 0,
+            currentScore: 0,
+            gameMode: null,
+
+            // สำหรับเกมส์ลำดับตัวเลข
+            sequence: [],
+            playerSequence: [],
+            round: 0,
+
+            // สำหรับเกมส์จับคู่
+            cards: [],
+            flipped: [null, null],
+            matched: 0,
+            attempts: 0,
+
+            // สำหรับเกมส์สี
+            colorSequence: [],
+            playerColorSequence: [],
+            colorRound: 0,
+
+            // ฟังก์ชันทั่วไป
+            showScreen(screenId) {
+                document.querySelectorAll('.menu-screen, .game-screen').forEach(el => el.style.display = 'none');
+                document.getElementById(screenId).style.display = screenId === 'mainMenu' ? 'flex' : 'block';
+            },
+
+            backToMenu() {
+                this.currentScore = 0;
+                this.showScreen('mainMenu');
+                this.updateBestScore();
+                document.getElementById('modal').classList.remove('show');
+            },
+
+            updateBestScore() {
+                document.getElementById('bestScoreDisplay').textContent = this.bestScore;
+            },
+
+            showGameOver(title, stats) {
+                document.getElementById('modalTitle').textContent = title;
+                document.getElementById('modalStats').innerHTML = stats;
+                document.getElementById('modal').classList.add('show');
+            },
+
+            // ===== เกมส์ลำดับตัวเลข =====
+            startSequenceGame() {
+                this.gameMode = 'sequence';
+                this.sequence = [];
+                this.playerSequence = [];
+                this.round = 0;
+                this.currentScore = 0;
+                this.showScreen('sequenceScreen');
+                this.updateSequenceDisplay();
+            },
+
+            updateSequenceDisplay() {
+                document.getElementById('sequenceRound').textContent = this.round;
+                document.getElementById('sequenceScore').textContent = this.currentScore;
+            },
+
+            nextSequenceRound() {
+                this.round++;
+                this.playerSequence = [];
+                this.sequence.push(Math.floor(Math.random() * 4) + 1);
+                this.updateSequenceDisplay();
+                document.getElementById('startSeqBtn').disabled = true;
+                this.showSequenceAnimation();
+            },
+
+            async showSequenceAnimation() {
+                const display = document.getElementById('sequenceDisplay');
+                display.textContent = 'ดูลำดับ...';
+                
+                document.querySelectorAll('.game-btn').forEach(btn => btn.disabled = true);
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                for (let num of this.sequence) {
+                    document.getElementById(`seq${num}`).style.opacity = '0.5';
+                    display.textContent = num;
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                    document.getElementById(`seq${num}`).style.opacity = '1';
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                display.textContent = 'ถึงเทิร์นของคุณ!';
+                document.querySelectorAll('.game-btn').forEach(btn => btn.disabled = false);
+            },
+
+            playerPressSequence(num) {
+                this.playerSequence.push(num);
+
+                if (this.playerSequence[this.playerSequence.length - 1] !== this.sequence[this.playerSequence.length - 1]) {
+                    this.gameOverSequence();
+                    return;
+                }
+
+                if (this.playerSequence.length === this.sequence.length) {
+                    this.currentScore += this.round * 10;
+                    document.getElementById('sequenceDisplay').textContent = '✓ ถูกต้อง!';
+                    document.querySelectorAll('.game-btn').forEach(btn => btn.disabled = true);
+                    document.getElementById('startSeqBtn').disabled = false;
+                    this.updateSequenceDisplay();
+                }
+            },
+
+            gameOverSequence() {
+                if (this.currentScore > this.bestScore) {
+                    this.bestScore = this.currentScore;
+                    localStorage.setItem('bestScore', this.bestScore);
+                }
+                const stats = `<strong>รอบ:</strong> ${this.round}<br><strong>คะแนน:</strong> ${this.currentScore}<br><strong>สูงสุด:</strong> ${this.bestScore}`;
+                this.showGameOver('🎮 เกมส์จบ!', stats);
+            },
+
+            // ===== เกมส์จับคู่ =====
+            startMatchingGame() {
+                this.gameMode = 'matching';
+                this.cards = [];
+                this.flipped = [null, null];
+                this.matched = 0;
+                this.attempts = 0;
+                this.currentScore = 0;
+
+                // สร้างคู่ตัวเลข
+                const numbers = Array.from({length: 8}, (_, i) => i + 1);
+                this.cards = [...numbers, ...numbers];
+                
+                // สุ่มลำดับ
+                for (let i = this.cards.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];
+                }
+
+                this.showScreen('matchingScreen');
+                this.renderMatchingCards();
+            },
+
+            renderMatchingCards() {
+                const grid = document.getElementById('matchingGrid');
+                grid.innerHTML = '';
+
+                this.cards.forEach((num, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'card';
+                    btn.textContent = '?';
+                    btn.onclick = () => this.flipCard(index);
+                    grid.appendChild(btn);
+                });
+
+                this.updateMatchingDisplay();
+            },
+
+            flipCard(index) {
+                const btn = document.querySelectorAll('.card')[index];
+                if (btn.textContent !== '?' || this.flipped[0] === index || this.flipped[1] === index) return;
+
+                btn.textContent = this.cards[index];
+                btn.style.background = 'linear-gradient(135deg, #4facfe, #00f2fe)';
+
+                if (this.flipped[0] === null) {
+                    this.flipped[0] = index;
+                } else {
+                    this.flipped[1] = index;
+                    this.attempts++;
+
+                    if (this.cards[this.flipped[0]] === this.cards[this.flipped[1]]) {
+                        this.matched++;
+                        this.flipped = [null, null];
+                        this.updateMatchingDisplay();
+
+                        if (this.matched === 8) {
+                            const score = Math.max(100 - this.attempts * 5, 0);
+                            const stats = `<strong>พยายาม:</strong> ${this.attempts}<br><strong>คะแนน:</strong> ${score}`;
+                            if (score > this.bestScore) {
+                                this.bestScore = score;
+                                localStorage.setItem('bestScore', this.bestScore);
+                            }
+                            this.showGameOver('🎉 ยินดีด้วย!', stats);
+                        }
+                    } else {
+                        setTimeout(() => this.unflopCards(), 1000);
+                    }
+                }
+            },
+
+            unflopCards() {
+                const btns = document.querySelectorAll('.card');
+                if (this.flipped[0] !== null) {
+                    btns[this.flipped[0]].textContent = '?';
+                    btns[this.flipped[0]].style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                }
+                if (this.flipped[1] !== null) {
+                    btns[this.flipped[1]].textContent = '?';
+                    btns[this.flipped[1]].style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                }
+                this.flipped = [null, null];
+            },
+
+            updateMatchingDisplay() {
+                document.getElementById('matchingMatched').textContent = `${this.matched}/8`;
+                document.getElementById('matchingAttempts').textContent = this.attempts;
+            },
+
+            // ===== เกมส์สี =====
+            startColorGame() {
+                this.gameMode = 'color';
+                this.colorSequence = [];
+                this.playerColorSequence = [];
+                this.colorRound = 0;
+                this.currentScore = 0;
+                this.showScreen('colorScreen');
+                this.updateColorDisplay();
+            },
+
+            updateColorDisplay() {
+                document.getElementById('colorRound').textContent = this.colorRound;
+                document.getElementById('colorScore').textContent = this.currentScore;
+            },
+
+            nextColorRound() {
+                this.colorRound++;
+                this.playerColorSequence = [];
+                const colors = ['#e74c3c', '#f39c12', '#27ae60', '#3498db'];
+                this.colorSequence.push(colors[Math.floor(Math.random() * 4)]);
+                this.updateColorDisplay();
+                document.getElementById('startColorBtn').disabled = true;
+                this.showColorAnimation();
+            },
+
+            async showColorAnimation() {
+                const display = document.getElementById('colorDisplay');
+                document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = true);
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                for (let color of this.colorSequence) {
+                    display.style.background = color;
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                    display.style.background = '#95a5a6';
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+
+                document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = false);
+            },
+
+            playerChooseColor(color) {
+                this.playerColorSequence.push(color);
+                document.getElementById('colorDisplay').style.background = color;
+
+                if (this.playerColorSequence[this.playerColorSequence.length - 1] !== this.colorSequence[this.playerColorSequence.length - 1]) {
+                    document.getElementById('colorDisplay').style.background = '#c0392b';
+                    this.gameOverColor();
+                    return;
+                }
+
+                if (this.playerColorSequence.length === this.colorSequence.length) {
+                    this.currentScore += this.colorRound * 15;
+                    document.getElementById('colorDisplay').style.background = '#27ae60';
+                    document.querySelectorAll('.color-btn').forEach(btn => btn.disabled = true);
+                    document.getElementById('startColorBtn').disabled = false;
+                    this.updateColorDisplay();
+                }
+            },
+
+            gameOverColor() {
+                if (this.currentScore > this.bestScore) {
+                    this.bestScore = this.currentScore;
+                    localStorage.setItem('bestScore', this.bestScore);
+                }
+                const stats = `<strong>รอบ:</strong> ${this.colorRound}<br><strong>คะแนน:</strong> ${this.currentScore}<br><strong>สูงสุด:</strong> ${this.bestScore}`;
+                this.showGameOver('🎮 เกมส์จบ!', stats);
+            }
+        };
+
+        // เมื่อโหลดหน้า
+        window.onload = () => {
+            game.updateBestScore();
+            game.backToMenu();
+        };
+    </script>
+</body>
+</html>
